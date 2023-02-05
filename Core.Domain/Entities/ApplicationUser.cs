@@ -11,6 +11,7 @@ public class ApplicationUser : IdentityUser
         DateTime createdAtUtc)
     {
         Email = email;
+        UserName = email;
         FirstName = firstName;
         LastName = lastName;
         CreatedAtUtc = createdAtUtc;

@@ -17,4 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     {
         base.OnModelCreating(builder);
     }
+
+    public DbSet<Permission> Permissions { get; set; } = null!;
+    public DbSet<UserPermission> UserPermissions { get; set; } = null!;
 }

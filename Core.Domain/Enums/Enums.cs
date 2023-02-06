@@ -7,7 +7,8 @@ public class Enums
 
 public enum Permissions
 {
-    CanViewMemberGroup = 1,
-    CanViewMember = 2,
-    CanUpdateMember = 3
+    ReadUsers = 1,
+    ReadUser = 2,
+    UpdateUser = 3,
+    DeleteUser
 }

@@ -91,25 +91,21 @@ public class ApplicationDbContextInitializer
     {
         try
         {
-            if (_context.Permissions.All(x => x.Name != Constants.CanViewMemberGroup))
-            {
-                Permission permission = new((int)Permissions.CanViewMemberGroup, Constants.CanViewMemberGroup);
-                await _context.Permissions.AddAsync(permission);
-                await _context.SaveChangesAsync();  
-            }
+            IEnumerable<Permission> permissions = Enum
+                .GetValues<Permissions>()
+                .Select(p => new Permission
+                {
+                    Id = (int)p,
+                    Name = p.ToString(),
+                });
 
-            if (_context.Permissions.All(x => x.Name != Constants.CanViewMember))
+            foreach (Permission permission in permissions)
             {
-                Permission permission = new((int)Permissions.CanViewMember, Constants.CanViewMember);
-                await _context.Permissions.AddAsync(permission);
-                await _context.SaveChangesAsync();
-            }
-
-            if (_context.Permissions.All(x => x.Name != Constants.CanUpdateMember))
-            {
-                Permission permission = new((int)Permissions.CanUpdateMember, Constants.CanUpdateMember);
-                await _context.Permissions.AddAsync(permission);
-                await _context.SaveChangesAsync();
+                if (_context.Permissions.All(x => x.Name != permission.Name))
+                {
+                    await _context.Permissions.AddAsync(permission);
+                    await _context.SaveChangesAsync();
+                }
             }
         }
         catch (Exception ex)

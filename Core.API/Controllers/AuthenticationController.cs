@@ -25,7 +25,7 @@ namespace Core.API.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
             LoginQuery query = new(request.Email, request.Password);
 

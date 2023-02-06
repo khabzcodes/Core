@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230204142729_PermissionEntity")]
-    partial class PermissionEntity
+    [Migration("20230206182704_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

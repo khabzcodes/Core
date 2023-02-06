@@ -12,6 +12,12 @@ public class UserPermissionsRepository : IUserPermissionsRepository
         _context = context;
     }
 
+    public void Add(UserPermission permission)
+    {
+        _context.UserPermissions.Add(permission);
+        _context.SaveChanges();
+    }
+
     public async Task<HashSet<string>> GetUserPermissionsAsync(string userId)
     {
         string[] permissions = await _context.UserPermissions

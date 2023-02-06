@@ -10,5 +10,6 @@ public enum Permissions
     ReadUsers = 1,
     ReadUser = 2,
     UpdateUser = 3,
-    DeleteUser
+    DeleteUser = 4,
+    AddUser = 5,
 }

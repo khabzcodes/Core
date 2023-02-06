@@ -1,6 +1,9 @@
-﻿namespace Core.Application.Persistence;
+﻿using Core.Domain.Entities;
+
+namespace Core.Application.Persistence;
 
 public interface IUserPermissionsRepository
 {
     Task<HashSet<string>> GetUserPermissionsAsync(string userId);
+    void Add(UserPermission permission);
 }

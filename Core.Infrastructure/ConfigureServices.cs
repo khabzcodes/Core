@@ -63,6 +63,7 @@ public static class ConfigureServices
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IUserPermissionsRepository, UserPermissionsRepository>();
+        services.AddScoped<IPermissionsRepository, PermissionsRepository>();
 
         return services;
     }

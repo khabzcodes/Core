@@ -1,11 +1,13 @@
 ﻿using Core.Application.Common.Interfaces.Authentication;
 using Core.Application.Common.Interfaces.Data;
 using Core.Application.Common.Interfaces.Helpers;
+using Core.Application.Persistence;
 using Core.Domain.Entities;
 using Core.Infrastructure.Authentication;
 using Core.Infrastructure.Helpers;
 using Core.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -52,9 +54,15 @@ public static class ConfigureServices
             };
         });
 
+        services.AddAuthorization();
+
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
+        services.AddScoped<IUserPermissionsRepository, UserPermissionsRepository>();
 
         return services;
     }

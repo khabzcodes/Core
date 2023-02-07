@@ -23,6 +23,11 @@ public class ClientsRepository : IClientsRepository
         return _context.Clients.ToList();
     }
 
+    public Client? FindById(Guid id)
+    {
+        return _context.Clients.FirstOrDefault(x => x.Id == id);
+    }
+
     public Client? FindByName(string name)
     {
         return _context.Clients.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());

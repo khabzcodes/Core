@@ -7,4 +7,5 @@ public interface IClientsRepository
     void Add(Client client);
     Client? FindByName(string name);
     List<Client> FindAll();
+    Client? FindById(Guid id);
 }

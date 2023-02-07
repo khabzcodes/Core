@@ -1,5 +1,6 @@
 ﻿using Core.Application.Clients.Commands.CreateClient;
 using Core.Application.Clients.Common;
+using Core.Application.Clients.Queries.GetClient;
 using Core.Application.Clients.Queries.GetClients;
 using Core.Contracts.Clients;
 using Core.Domain.Enums;
@@ -35,6 +36,24 @@ namespace Core.API.Controllers
             GetClientsQuery query = new();
 
             ErrorOr<List<ClientResponse>> results = await _mediator.Send(query, cancellationToken);
+
+            return results.Match(result => Ok(result), error => Problem(error));
+        }
+
+        /// <summary>
+        /// Get client by id
+        /// Authenticated user must have ReadClient permission
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("{clientId}")]
+        [HasPermission(Permissions.ReadClient)]
+        public async Task<IActionResult> GetById(Guid clientId, CancellationToken cancellationToken)
+        {
+            GetClientQuery query = new(clientId);
+
+            ErrorOr<ClientResponse> results = await _mediator.Send(query, cancellationToken);
 
             return results.Match(result => Ok(result), error => Problem(error));
         }

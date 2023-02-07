@@ -32,4 +32,12 @@ public class ClientsRepository : IClientsRepository
     {
         return _context.Clients.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
     }
+
+    public Client Update(Client client)
+    {
+        _context.Clients.Update(client);
+        _context.SaveChanges();
+
+        return client;
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Application.Clients.Commands.CreateClient;
+using Core.Application.Clients.Commands.UpdateClient;
 using Core.Application.Clients.Common;
 using Core.Application.Clients.Queries.GetClient;
 using Core.Application.Clients.Queries.GetClients;
@@ -74,6 +75,28 @@ namespace Core.API.Controllers
             ErrorOr<ClientResponse> result = await _mediator.Send(command, cancellationToken);
 
             return result.Match(result => Ok(result), error => Problem(error));
+        }
+
+        /// <summary>
+        /// Update Client
+        /// Authenticated user must have UpdateClient permission
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("{clientId}")]
+        [HasPermission(Permissions.UpdateClient)]
+        public async Task<IActionResult> Update(
+            Guid clientId, 
+            [FromBody] UpdateClientRequest request, 
+            CancellationToken cancellationToken)
+        {
+            UpdateClientCommand command = new(clientId, request.Name, request.Sector, request.EmailAddress);
+
+            ErrorOr<ClientResponse> results = await _mediator.Send(command, cancellationToken);
+
+            return results.Match(result => Ok(result), error => Problem(error));
         }
     }
 }

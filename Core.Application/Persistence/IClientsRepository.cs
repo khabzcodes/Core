@@ -8,4 +8,5 @@ public interface IClientsRepository
     Client? FindByName(string name);
     List<Client> FindAll();
     Client? FindById(Guid id);
+    Client Update(Client client);
 }

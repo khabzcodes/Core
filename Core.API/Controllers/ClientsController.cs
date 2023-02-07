@@ -1,5 +1,6 @@
 ﻿using Core.Application.Clients.Commands.CreateClient;
 using Core.Application.Clients.Common;
+using Core.Application.Clients.Queries.GetClients;
 using Core.Contracts.Clients;
 using Core.Domain.Enums;
 using Core.Infrastructure.Authentication;
@@ -19,6 +20,23 @@ namespace Core.API.Controllers
         public ClientsController(ISender mediator)
         {
             _mediator = mediator;
+        }
+
+        /// <summary>
+        /// Get all clients
+        /// Authenticated user must have ReadClients permission
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [HasPermission(Permissions.ReadClients)]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+        {
+            GetClientsQuery query = new();
+
+            ErrorOr<List<ClientResponse>> results = await _mediator.Send(query, cancellationToken);
+
+            return results.Match(result => Ok(result), error => Problem(error));
         }
 
         /// <summary>

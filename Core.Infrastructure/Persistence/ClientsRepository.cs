@@ -18,6 +18,11 @@ public class ClientsRepository : IClientsRepository
         _context.SaveChanges();
     }
 
+    public List<Client> FindAll()
+    {
+        return _context.Clients.ToList();
+    }
+
     public Client? FindByName(string name)
     {
         return _context.Clients.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());

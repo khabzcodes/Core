@@ -32,4 +32,10 @@ public class UserPermissionsRepository : IUserPermissionsRepository
 
         return permissions.ToHashSet();
     }
+
+    public void Remove(UserPermission permission)
+    {
+        _context.UserPermissions.Remove(permission);
+        _context.SaveChanges();
+    }
 }

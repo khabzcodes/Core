@@ -1,4 +1,5 @@
-﻿using Core.Application.UserPermissions.Commands;
+﻿using Core.Application.UserPermissions.Commands.AddUserPermissions;
+using Core.Application.UserPermissions.Commands.RemoveUserPermissions;
 using Core.Application.UserPermissions.Common;
 using Core.Contracts.UserPermissions;
 using Core.Domain.Enums;
@@ -33,6 +34,19 @@ namespace Core.API.Controllers
             ErrorOr<List<UserPermissionResponse>> result = await _mediator.Send(command, cancellationToken);
 
             return result.Match(result => Ok(result), error => Problem(error));
+        }
+
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> Remove(
+            string userId, 
+            [FromBody] RemoveUserPermissionsRequest request, 
+            CancellationToken cancellationToken)
+        {
+            RemoveUserPermissionsCommand command = new(userId, request.Permissions);
+
+            ErrorOr<List<UserPermissionResponse>> result = await _mediator.Send(command, cancellationToken);
+
+            return result.Match(result => Accepted(result), error => Problem(error));
         }
     }
 }

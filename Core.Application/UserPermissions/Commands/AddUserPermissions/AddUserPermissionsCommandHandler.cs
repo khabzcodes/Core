@@ -5,7 +5,7 @@ using Core.Domain.Entities;
 using ErrorOr;
 using MediatR;
 
-namespace Core.Application.UserPermissions.Commands;
+namespace Core.Application.UserPermissions.Commands.AddUserPermissions;
 
 public class AddUserPermissionsCommandHandler :
     IRequestHandler<AddUserPermissionsCommand, ErrorOr<List<UserPermissionResponse>>>
@@ -14,7 +14,7 @@ public class AddUserPermissionsCommandHandler :
     private readonly IPermissionsRepository _permissionsRepository;
 
     public AddUserPermissionsCommandHandler(
-        IUserPermissionsRepository userPermissionsRepository, 
+        IUserPermissionsRepository userPermissionsRepository,
         IPermissionsRepository permissionsRepository)
     {
         _userPermissionsRepository = userPermissionsRepository;
@@ -25,20 +25,20 @@ public class AddUserPermissionsCommandHandler :
     {
         List<UserPermission> userPermissions = new();
 
-        foreach(var permission in request.Permissions)
+        foreach (var permission in request.Permissions)
         {
             Permission? permissionExist = _permissionsRepository.FindByName(permission.ToUpper());
             if (permissionExist is null) return PermissionErrors.NotFound(permission.ToUpper());
 
             UserPermission userPermission = UserPermission.Create(
-                Guid.NewGuid(), 
-                request.UserId, 
+                Guid.NewGuid(),
+                request.UserId,
                 permissionExist.Id);
 
             userPermissions.Add(userPermission);
         }
 
-        foreach(var userPermission in userPermissions)
+        foreach (var userPermission in userPermissions)
         {
             if (!_userPermissionsRepository
                 .FindAllByUserId(request.UserId)
@@ -52,8 +52,8 @@ public class AddUserPermissionsCommandHandler :
 
         List<UserPermissionResponse> result = currentUserPermissions
             .Select(p => new UserPermissionResponse(
-                p.Id, 
-                p.UserId, 
+                p.Id,
+                p.UserId,
                 p.PermissionId))
             .OrderBy(p => p.PermissionId)
             .ToList();

@@ -2,7 +2,7 @@
 using ErrorOr;
 using MediatR;
 
-namespace Core.Application.UserPermissions.Commands;
+namespace Core.Application.UserPermissions.Commands.AddUserPermissions;
 
 public record AddUserPermissionsCommand(
     string UserId,

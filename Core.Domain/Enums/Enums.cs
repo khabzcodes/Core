@@ -12,4 +12,9 @@ public enum Permissions
     UpdateUser = 3,
     DeleteUser = 4,
     AddUser = 5,
+    ReadClients,
+    ReadClient,
+    UpdateClient,
+    DeleteClient,
+    AddClient
 }

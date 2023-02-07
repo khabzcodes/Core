@@ -20,4 +20,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<Permission> Permissions { get; set; } = null!;
     public DbSet<UserPermission> UserPermissions { get; set; } = null!;
+    public DbSet<Client> Clients { get; set; } = null!;
 }

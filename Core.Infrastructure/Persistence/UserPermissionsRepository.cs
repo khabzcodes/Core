@@ -18,6 +18,11 @@ public class UserPermissionsRepository : IUserPermissionsRepository
         _context.SaveChanges();
     }
 
+    public List<UserPermission> FindAllByUserId(string userId)
+    {
+        return _context.UserPermissions.Where(x => x.UserId == userId).ToList();
+    }
+
     public async Task<HashSet<string>> GetUserPermissionsAsync(string userId)
     {
         string[] permissions = await _context.UserPermissions

@@ -64,6 +64,7 @@ public static class ConfigureServices
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IUserPermissionsRepository, UserPermissionsRepository>();
         services.AddScoped<IPermissionsRepository, PermissionsRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
 
         return services;
     }

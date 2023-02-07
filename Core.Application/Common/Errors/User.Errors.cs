@@ -8,4 +8,9 @@ public static class UserErrors
         code: "Users.AlreadyExist",
         description: $"User with {email} email already exist"
         );
+
+    public static Error NotFound(string userId) => Error.NotFound(
+        code: "Users.NotFound",
+        description: $"User with user id {userId} not found"
+        );
 }

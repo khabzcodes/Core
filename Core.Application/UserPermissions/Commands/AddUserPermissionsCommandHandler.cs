@@ -55,8 +55,9 @@ public class AddUserPermissionsCommandHandler :
                 p.Id, 
                 p.UserId, 
                 p.PermissionId))
+            .OrderBy(p => p.PermissionId)
             .ToList();
 
-        return Task.FromResult(result).Result;
+        return await Task.FromResult(result);
     }
 }

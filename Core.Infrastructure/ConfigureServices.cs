@@ -65,6 +65,7 @@ public static class ConfigureServices
         services.AddScoped<IUserPermissionsRepository, UserPermissionsRepository>();
         services.AddScoped<IPermissionsRepository, PermissionsRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddScoped<IClientsRepository, ClientsRepository>();
 
         return services;
     }

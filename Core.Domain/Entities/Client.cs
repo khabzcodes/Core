@@ -1,10 +1,18 @@
-﻿namespace Core.Domain.Entities;
+﻿using Core.Domain.Primitives;
 
-public class Client
+namespace Core.Domain.Entities;
+
+public sealed class Client : Entity
 {
-    public Client(Guid id, string? logoUrl, string name, string sector, string emailAddress, DateTime createdAtUtc)
+    private Client(
+        Guid id, 
+        string? logoUrl, 
+        string name, 
+        string sector, 
+        string emailAddress, 
+        DateTime createdAtUtc)
+        : base(id)
     {
-        Id = id;
         LogoUrl = logoUrl;
         Name = name;
         Sector = sector;
@@ -12,14 +20,19 @@ public class Client
         CreatedAtUtc = createdAtUtc;
     }
 
-    public Guid Id { get; set; }
     public string? LogoUrl { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Sector { get; set; } = string.Empty;
     public string EmailAddress { get; set; } = string.Empty;
     public DateTime CreatedAtUtc { get; set; }
 
-    public static Client Create(Guid id, string? logoUrl, string name, string sector, string emailAddress, DateTime createdAtUtc)
+    public static Client Create(
+        Guid id, 
+        string? logoUrl, 
+        string name, 
+        string sector, 
+        string emailAddress, 
+        DateTime createdAtUtc)
     {
         return new Client(id, logoUrl, name, sector, emailAddress, createdAtUtc);
     }

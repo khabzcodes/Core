@@ -31,9 +31,9 @@ namespace Core.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [HasPermission(Permissions.ReadUsers)]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
-            GetUsersQuery query = new();
+            GetUsersQuery query = new(pageNumber, pageSize);
 
             ErrorOr<List<UserResponse>> result = await _mediator.Send(query, cancellationToken);
 

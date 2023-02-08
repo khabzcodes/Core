@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Core.Application.Users.Queries.GetUsers;
 
-public record GetUsersQuery() : IRequest<ErrorOr<List<UserResponse>>>;
+public record GetUsersQuery (int PageNumber, int PageSize) : IRequest<ErrorOr<List<UserResponse>>>;

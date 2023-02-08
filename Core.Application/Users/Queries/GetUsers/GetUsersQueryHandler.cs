@@ -20,34 +20,29 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ErrorOr<List<
         _userPermissionsRepository = userPermissionsRepository;
     }
 
-    public async Task<ErrorOr<List<UserResponse>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<UserResponse>>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
     {
-        List<ApplicationUser> users = _usersRepository.FindAll();
-
-        List<UserResponse> results = new();
-
-        foreach(var user in users)
-        {
-            List<UserPermission> userPermissionsResponse = _userPermissionsRepository.FindAllByUserId(user.Id);
-
-            UserResponse userResponse = new(
-                user.Id,
-                user.FirstName,
-                user.LastName,
-                user.Email,
-                userPermissionsResponse
+        List<UserResponse> users = _usersRepository
+            .FindAll()
+            .OrderBy(x => x.CreatedAtUtc)
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .Select(u => new UserResponse(
+                u.Id,
+                u.FirstName,
+                u.LastName,
+                u.Email,
+                _userPermissionsRepository.FindAllByUserId(u.Id)
                 .Select(p => new UserPermissionResponse(
-                    p.Id,
-                    p.UserId,
+                    p.Id, 
+                    p.UserId, 
                     p.PermissionId))
-                .OrderBy(p => p.PermissionId)
+                .OrderBy(x => x.PermissionId)
                 .ToList(),
-                user.CreatedAtUtc
-                );
+                u.CreatedAtUtc
+                ))
+            .ToList();
 
-            results.Add(userResponse);
-        }
-
-        return await Task.FromResult(results);
+        return await Task.FromResult(users.ToList());
     }
 }

@@ -1,20 +1,24 @@
-﻿namespace Core.Domain.Entities;
+﻿using Core.Domain.Primitives;
 
-public class UserPermission
+namespace Core.Domain.Entities;
+
+public class UserPermission : Entity
 {
     public UserPermission(Guid id, string userId, int permissionId)
+        : base(id)
     {
-        Id = id;
         UserId = userId;
         PermissionId = permissionId;
     }
 
-    public Guid Id { get; set; }
     public string UserId { get; set; } = string.Empty;
     public int PermissionId { get; set; }
     public virtual Permission Permission { get; set; } = null!;
 
-    public static UserPermission Create(Guid id, string userId, int permissionId)
+    public static UserPermission Create(
+        Guid id, 
+        string userId, 
+        int permissionId)
     {
         return new UserPermission(id, userId, permissionId);
     }

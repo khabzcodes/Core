@@ -1,5 +1,6 @@
 ﻿using Core.Application.Persistence;
 using Core.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence;
 
@@ -14,7 +15,7 @@ public class UsersRepository : IUsersRepository
 
     public List<ApplicationUser> FindAll()
     {
-        return _context.Users.ToList();
+        return _context.Users.AsNoTracking().ToList();
     }
 
     public ApplicationUser? FindById(string id)

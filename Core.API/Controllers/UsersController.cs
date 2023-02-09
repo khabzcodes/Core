@@ -1,4 +1,5 @@
-﻿using Core.Application.Users.Commands.AddUser;
+﻿using Core.Application.Common.Response;
+using Core.Application.Users.Commands.AddUser;
 using Core.Application.Users.Common;
 using Core.Application.Users.Queries.GetUser;
 using Core.Application.Users.Queries.GetUsers;
@@ -31,11 +32,11 @@ namespace Core.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [HasPermission(Permissions.ReadUsers)]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
-            GetUsersQuery query = new();
+            GetUsersQuery query = new(pageNumber, pageSize);
 
-            ErrorOr<List<UserResponse>> result = await _mediator.Send(query, cancellationToken);
+            ErrorOr<PaginatedResponse<List<UserResponse>>> result = await _mediator.Send(query, cancellationToken);
 
             return result.Match(result => Ok(result), error => Problem(error));
         }

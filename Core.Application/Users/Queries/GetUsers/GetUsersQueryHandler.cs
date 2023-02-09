@@ -1,4 +1,5 @@
-﻿using Core.Application.Persistence;
+﻿using Core.Application.Common.Response;
+using Core.Application.Persistence;
 using Core.Application.UserPermissions.Common;
 using Core.Application.Users.Common;
 using Core.Domain.Entities;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Core.Application.Users.Queries.GetUsers;
 
-public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ErrorOr<List<UserResponse>>>
+public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ErrorOr<PaginatedResponse<List<UserResponse>>>>
 {
     private readonly IUsersRepository _usersRepository;
     private readonly IUserPermissionsRepository _userPermissionsRepository;
@@ -20,33 +21,39 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ErrorOr<List<
         _userPermissionsRepository = userPermissionsRepository;
     }
 
-    public async Task<ErrorOr<List<UserResponse>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<PaginatedResponse<List<UserResponse>>>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
     {
         List<ApplicationUser> users = _usersRepository.FindAll();
 
-        List<UserResponse> results = new();
-
-        foreach(var user in users)
-        {
-            List<UserPermission> userPermissionsResponse = _userPermissionsRepository.FindAllByUserId(user.Id);
-
-            UserResponse userResponse = new(
-                user.Id,
-                user.FirstName,
-                user.LastName,
-                user.Email,
-                userPermissionsResponse
+        List<UserResponse> userResponse = users
+            .OrderBy(x => x.CreatedAtUtc)
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .Select(u => new UserResponse(
+                u.Id,
+                u.FirstName,
+                u.LastName,
+                u.Email,
+                _userPermissionsRepository.FindAllByUserId(u.Id)
                 .Select(p => new UserPermissionResponse(
                     p.Id,
                     p.UserId,
                     p.PermissionId))
-                .OrderBy(p => p.PermissionId)
+                .OrderBy(x => x.PermissionId)
                 .ToList(),
-                user.CreatedAtUtc
-                );
+                u.CreatedAtUtc
+                ))
+            .ToList();
 
-            results.Add(userResponse);
-        }
+        int totalPages = (int)Math.Ceiling(users.Count / (double)query.PageSize);
+
+        PaginatedResponse<List<UserResponse>> results = new(
+            userResponse, 
+            query.PageNumber, 
+            totalPages, 
+            users.Count, 
+            query.PageNumber > 1, 
+            query.PageNumber < totalPages);
 
         return await Task.FromResult(results);
     }

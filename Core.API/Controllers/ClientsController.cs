@@ -3,6 +3,7 @@ using Core.Application.Clients.Commands.UpdateClient;
 using Core.Application.Clients.Common;
 using Core.Application.Clients.Queries.GetClient;
 using Core.Application.Clients.Queries.GetClients;
+using Core.Application.Common.Response;
 using Core.Contracts.Clients;
 using Core.Domain.Enums;
 using Core.Infrastructure.Authentication;
@@ -26,17 +27,19 @@ namespace Core.API.Controllers
 
         /// <summary>
         /// Get all clients
-        /// Authenticated user must have ReadClients permission
+        /// Authenticated user must have ReadClients permission 
         /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
         [HasPermission(Permissions.ReadClients)]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
-            GetClientsQuery query = new();
+            GetClientsQuery query = new(pageNumber, pageSize);
 
-            ErrorOr<List<ClientResponse>> results = await _mediator.Send(query, cancellationToken);
+            ErrorOr<PaginatedResponse<List<ClientResponse>>> results = await _mediator.Send(query, cancellationToken);
 
             return results.Match(result => Ok(result), error => Problem(error));
         }

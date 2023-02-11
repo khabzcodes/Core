@@ -10,13 +10,19 @@ public class RemoveUserPermissionsCommandHandler :
     IRequestHandler<RemoveUserPermissionsCommand, ErrorOr<List<UserPermissionResponse>>>
 {
     private readonly IUserPermissionsRepository _userPermissionsRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public RemoveUserPermissionsCommandHandler(IUserPermissionsRepository userPermissionsRepository)
+    public RemoveUserPermissionsCommandHandler(
+        IUserPermissionsRepository userPermissionsRepository, 
+        IUnitOfWork unitOfWork)
     {
         _userPermissionsRepository = userPermissionsRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<ErrorOr<List<UserPermissionResponse>>> Handle(RemoveUserPermissionsCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<UserPermissionResponse>>> Handle(
+        RemoveUserPermissionsCommand request, 
+        CancellationToken cancellationToken)
     {
         List<UserPermission> permissions = _userPermissionsRepository.FindAllByUserId(request.UserId);
 
@@ -27,6 +33,7 @@ public class RemoveUserPermissionsCommandHandler :
             if (permissionToDelete is not null)
             {
                 _userPermissionsRepository.Remove(permissionToDelete);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
         }
 
@@ -40,7 +47,7 @@ public class RemoveUserPermissionsCommandHandler :
             .OrderBy(x => x.PermissionId)
             .ToList();
         
-        return await Task.FromResult(result);
+        return result;
     }
 }
 

@@ -29,7 +29,7 @@ public static class ConfigureServices
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
-        services.AddIdentity<ApplicationUser, IdentityRole>()
+        services.AddDefaultIdentity<ApplicationUser>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
@@ -60,6 +60,7 @@ public static class ConfigureServices
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
 
         services.AddScoped<ApplicationDbContextInitializer>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IUserPermissionsRepository, UserPermissionsRepository>();

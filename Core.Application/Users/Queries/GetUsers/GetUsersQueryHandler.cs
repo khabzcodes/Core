@@ -23,7 +23,8 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ErrorOr<Pagin
 
     public async Task<ErrorOr<PaginatedResponse<List<UserResponse>>>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
     {
-        List<ApplicationUser> users = _usersRepository.FindAll();
+        IEnumerable<ApplicationUser> users = await _usersRepository.GetAllAsync();
+
 
         List<UserResponse> userResponse = users
             .OrderBy(x => x.CreatedAtUtc)
@@ -45,16 +46,16 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ErrorOr<Pagin
                 ))
             .ToList();
 
-        int totalPages = (int)Math.Ceiling(users.Count / (double)query.PageSize);
+        int totalPages = (int)Math.Ceiling(users.Count() / (double)query.PageSize);
 
         PaginatedResponse<List<UserResponse>> results = new(
             userResponse, 
             query.PageNumber, 
             totalPages, 
-            users.Count, 
+            users.Count(), 
             query.PageNumber > 1, 
             query.PageNumber < totalPages);
 
-        return await Task.FromResult(results);
+        return results;
     }
 }

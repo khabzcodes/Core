@@ -25,7 +25,7 @@ namespace Core.API.Controllers
         [HttpPut("{userId}")]
         [HasPermission(Permissions.UpdateUser)]
         public async Task<IActionResult> AddPermissions(
-            string userId, 
+            Guid userId, 
             [FromBody] AddUserPermissionsRequest request, 
             CancellationToken cancellationToken)
         {
@@ -38,7 +38,7 @@ namespace Core.API.Controllers
 
         [HttpDelete("{userId}")]
         public async Task<IActionResult> Remove(
-            string userId, 
+            Guid userId, 
             [FromBody] RemoveUserPermissionsRequest request, 
             CancellationToken cancellationToken)
         {

@@ -2,8 +2,6 @@
 
 namespace Core.Application.Persistence;
 
-public interface IUsersRepository
+public interface IUsersRepository : IGenericRepository<ApplicationUser>
 {
-    List<ApplicationUser> FindAll();
-    ApplicationUser? FindById(string id);
 }

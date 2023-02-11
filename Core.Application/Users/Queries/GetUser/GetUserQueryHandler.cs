@@ -23,7 +23,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, ErrorOr<UserRes
 
     public async Task<ErrorOr<UserResponse>> Handle(GetUserQuery query, CancellationToken cancellationToken)
     {
-        ApplicationUser? user = _usersRepository.FindById(query.UserId);
+        ApplicationUser? user = await _usersRepository.GetByIdAsync(query.UserId);
         if (user == null) return UserErrors.NotFound(query.UserId);
 
         List<UserPermission> permissions = _userPermissionsRepository.FindAllByUserId(query.UserId);

@@ -2,6 +2,6 @@
 
 public record UserPermissionResponse(
     Guid Id,
-    string UserId,
+    Guid UserId,
     int PermissionId
     );

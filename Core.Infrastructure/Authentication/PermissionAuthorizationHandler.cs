@@ -34,7 +34,7 @@ public class PermissionAuthorizationHandler
             .GetRequiredService<IUserPermissionsRepository>();
 
         HashSet<string> permissions = await userPermissionsRepository
-            .GetUserPermissionsAsync(userId);
+            .GetUserPermissionsAsync(Guid.Parse(userId));
 
         if (permissions.Contains(requirement.Permission))
         {

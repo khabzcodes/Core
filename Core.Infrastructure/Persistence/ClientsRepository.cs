@@ -3,41 +3,18 @@ using Core.Domain.Entities;
 
 namespace Core.Infrastructure.Persistence;
 
-public class ClientsRepository : IClientsRepository
+public class ClientsRepository : GenericRepository<Client>, IClientsRepository
 {
     private readonly ApplicationDbContext _context;
 
     public ClientsRepository(ApplicationDbContext context)
+        :base(context)
     {
         _context = context;
-    }
-
-    public void Add(Client client)
-    {
-        _context.Clients.Add(client);
-        _context.SaveChanges();
-    }
-
-    public List<Client> FindAll()
-    {
-        return _context.Clients.ToList();
-    }
-
-    public Client? FindById(Guid id)
-    {
-        return _context.Clients.FirstOrDefault(x => x.Id == id);
     }
 
     public Client? FindByName(string name)
     {
         return _context.Clients.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
-    }
-
-    public Client Update(Client client)
-    {
-        _context.Clients.Update(client);
-        _context.SaveChanges();
-
-        return client;
     }
 }

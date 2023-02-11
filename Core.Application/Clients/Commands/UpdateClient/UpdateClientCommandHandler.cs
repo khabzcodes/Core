@@ -10,31 +10,35 @@ namespace Core.Application.Clients.Commands.UpdateClient;
 public class UpdateClientCommandHandler : IRequestHandler<UpdateClientCommand, ErrorOr<ClientResponse>>
 {
     private readonly IClientsRepository _clientsRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateClientCommandHandler(IClientsRepository clientsRepository)
+    public UpdateClientCommandHandler(IClientsRepository clientsRepository, IUnitOfWork unitOfWork)
     {
         _clientsRepository = clientsRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ErrorOr<ClientResponse>> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
     {
-        if (_clientsRepository.FindByName(request.Name) != null) return ClientErrors.AlreadyExist(request.Name);
+        if (_clientsRepository.FindByName(request.Name) is not null) return ClientErrors.AlreadyExist(request.Name);
 
-        Client? client = _clientsRepository.FindById(request.Id);
-        if (client == null) return ClientErrors.NotFound;
+        Client? client = await _clientsRepository.GetByIdAsync(request.Id);
+        if (client is null) return ClientErrors.NotFound;
 
         client.Name = request.Name;
         client.Sector = request.Sector;
         client.EmailAddress = request.EmailAddress;
 
-        Client updateClient = _clientsRepository.Update(client);
+        _clientsRepository.Update(client);
 
-        return await Task.FromResult(new ClientResponse(
-            updateClient.Id, 
-            updateClient.LogoUrl, 
-            updateClient.Name, 
-            updateClient.Sector, 
-            updateClient.EmailAddress, 
-            updateClient.CreatedAtUtc));
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new ClientResponse(
+            client.Id,
+            client.LogoUrl,
+            client.Name,
+            client.Sector,
+            client.EmailAddress,
+            client.CreatedAtUtc);
     }
 }

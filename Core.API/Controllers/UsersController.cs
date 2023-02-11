@@ -50,7 +50,7 @@ namespace Core.API.Controllers
         /// <returns></returns>
         [HttpGet("{userId}")]
         [HasPermission(Permissions.ReadUser)]
-        public async Task<IActionResult> GetUserById(string userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserById(Guid userId, CancellationToken cancellationToken)
         {
             GetUserQuery query = new(userId);
 

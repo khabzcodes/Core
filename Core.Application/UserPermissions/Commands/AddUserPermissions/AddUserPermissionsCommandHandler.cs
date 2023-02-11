@@ -44,7 +44,7 @@ public class AddUserPermissionsCommandHandler :
                 .FindAllByUserId(request.UserId)
                 .Any(p => p.PermissionId == userPermission.PermissionId))
             {
-                _userPermissionsRepository.Add(userPermission);
+                await _userPermissionsRepository.AddAsync(userPermission);
             }
         }
 

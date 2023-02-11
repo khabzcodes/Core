@@ -6,7 +6,6 @@ using Core.Domain.Entities;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Core.Application.Users.Commands.AddUser;
 
@@ -15,26 +14,33 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, ErrorOr<Use
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IPermissionsRepository _permissionsRepository;
     private readonly IUserPermissionsRepository _userPermissionsRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public AddUserCommandHandler(
         UserManager<ApplicationUser> userManager,
         IPermissionsRepository permissionsRepository,
-        IUserPermissionsRepository userPermissionsRepository)
+        IUserPermissionsRepository userPermissionsRepository,
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _permissionsRepository = permissionsRepository;
         _userPermissionsRepository = userPermissionsRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ErrorOr<UserResponse>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        if ((await _userManager.FindByEmailAsync(request.Email)) != null) return UserErrors.AlreadyExist(request.Email);
+        if ((await _userManager.FindByEmailAsync(request.Email)) is not null) return UserErrors.AlreadyExist(request.Email);
 
-        ApplicationUser user = ApplicationUser.Create(request.Email, request.FirstName, request.LastName, DateTime.UtcNow);
+        ApplicationUser user = ApplicationUser.Create(
+            Guid.NewGuid(), 
+            request.Email, 
+            request.FirstName, 
+            request.LastName, 
+            DateTime.UtcNow);
 
         IdentityResult identityResult = await _userManager.CreateAsync(user, "Testing@123");
 
-        // Add all permissions to admin user
         if (!identityResult.Succeeded)
         {
             return Error.Failure();
@@ -45,17 +51,18 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, ErrorOr<Use
         foreach(var permission in request.Permissions)
         {
             Permission? findPermission = _permissionsRepository.FindByName(permission.ToUpper());
-            if (findPermission != null)
+            if (findPermission is not null)
             {
                 UserPermission userPermission = UserPermission.Create(
                     Guid.NewGuid(),
                     user.Id,
                     findPermission.Id);
-
-                _userPermissionsRepository.Add(userPermission);
                 userPermissions.Add(userPermission);
             }
         }
+
+        await _userPermissionsRepository.AddRangeAsync(userPermissions);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         List<UserPermissionResponse> userPermissionResponse = userPermissions
             .Select(up => new UserPermissionResponse(

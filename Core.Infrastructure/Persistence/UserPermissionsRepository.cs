@@ -4,26 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence;
 
-public class UserPermissionsRepository : IUserPermissionsRepository
+public class UserPermissionsRepository : GenericRepository<UserPermission>, IUserPermissionsRepository
 {
     private readonly ApplicationDbContext _context;
     public UserPermissionsRepository(ApplicationDbContext context)
+        :base(context)
     {
         _context = context;
     }
 
-    public void Add(UserPermission permission)
-    {
-        _context.UserPermissions.Add(permission);
-        _context.SaveChanges();
-    }
-
-    public List<UserPermission> FindAllByUserId(string userId)
+    public List<UserPermission> FindAllByUserId(Guid userId)
     {
         return _context.UserPermissions.Where(x => x.UserId == userId).ToList();
     }
 
-    public async Task<HashSet<string>> GetUserPermissionsAsync(string userId)
+    public async Task<HashSet<string>> GetUserPermissionsAsync(Guid userId)
     {
         string[] permissions = await _context.UserPermissions
             .Include(x => x.Permission)
@@ -31,11 +26,5 @@ public class UserPermissionsRepository : IUserPermissionsRepository
             .ToArrayAsync();
 
         return permissions.ToHashSet();
-    }
-
-    public void Remove(UserPermission permission)
-    {
-        _context.UserPermissions.Remove(permission);
-        _context.SaveChanges();
     }
 }

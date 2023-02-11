@@ -5,6 +5,6 @@ using MediatR;
 namespace Core.Application.UserPermissions.Commands.AddUserPermissions;
 
 public record AddUserPermissionsCommand(
-    string UserId,
+    Guid UserId,
     HashSet<string> Permissions
     ) : IRequest<ErrorOr<List<UserPermissionResponse>>>;

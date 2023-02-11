@@ -5,5 +5,5 @@ using MediatR;
 namespace Core.Application.Users.Queries.GetUser;
 
 public record GetUserQuery(
-    string UserId
+    Guid UserId
     ) : IRequest<ErrorOr<UserResponse>>;

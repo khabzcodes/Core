@@ -2,10 +2,8 @@
 
 namespace Core.Application.Persistence;
 
-public interface IUserPermissionsRepository
+public interface IUserPermissionsRepository : IGenericRepository<UserPermission>
 {
-    Task<HashSet<string>> GetUserPermissionsAsync(string userId);
-    void Add(UserPermission permission);
-    List<UserPermission> FindAllByUserId(string userId);
-    void Remove(UserPermission permission);
+    Task<HashSet<string>> GetUserPermissionsAsync(Guid userId);
+    List<UserPermission> FindAllByUserId(Guid userId);
 }

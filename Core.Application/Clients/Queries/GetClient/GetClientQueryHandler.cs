@@ -18,7 +18,7 @@ public class GetClientQueryHandler : IRequestHandler<GetClientQuery, ErrorOr<Cli
 
     public async Task<ErrorOr<ClientResponse>> Handle(GetClientQuery query, CancellationToken cancellationToken)
     {
-        Client? client = _clientsRepository.FindById(query.Id);
+        Client? client = await _clientsRepository.GetByIdAsync(query.Id);
 
         if (client == null) return ClientErrors.NotFound;
 

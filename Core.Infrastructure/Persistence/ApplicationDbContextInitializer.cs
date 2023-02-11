@@ -59,6 +59,7 @@ public class ApplicationDbContextInitializer
             if (await _userManager.FindByEmailAsync(Constants.AdminEmail) == null)
             {
                 ApplicationUser user = new(
+                    Guid.NewGuid(),
                     Constants.AdminEmail,
                     Constants.AdminFirstName,
                     Constants.AdminLastName,

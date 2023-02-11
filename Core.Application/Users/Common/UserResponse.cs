@@ -3,7 +3,7 @@
 namespace Core.Application.Users.Common;
 
 public record UserResponse(
-    string UserId,
+    Guid UserId,
     string FirstName,
     string LastName,
     string Email,

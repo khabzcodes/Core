@@ -4,22 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Persistence;
 
-public class UsersRepository : IUsersRepository
+public class UsersRepository : GenericRepository<ApplicationUser>, IUsersRepository
 {
     private readonly ApplicationDbContext _context;
 
     public UsersRepository(ApplicationDbContext context)
+        :base(context)
     {
         _context = context;
-    }
-
-    public List<ApplicationUser> FindAll()
-    {
-        return _context.Users.AsNoTracking().ToList();
-    }
-
-    public ApplicationUser? FindById(string id)
-    {
-        return _context.Users.FirstOrDefault(u => u.Id == id);
     }
 }
